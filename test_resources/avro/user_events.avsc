@@ -1,0 +1,25 @@
+{
+  "name": "UserEvent",
+  "type": "record",
+  "fields": [
+    {
+      "name": "id",
+      "type": {
+        "type": "fixed",
+        "name": "uuid",
+        "size": 36
+      }
+    },
+    {
+      "name": "event_type",
+      "type": {
+        "type": "enum",
+        "name": "type",
+        "symbols": [
+          "created",
+          "updated"
+        ]
+      }
+    }
+  ]
+}

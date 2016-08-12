@@ -1,4 +1,4 @@
-(set-env! :source-paths #{"src"}
+(set-env! :resource-paths #{"src"}
           :dependencies '[[io.thdr/kfk.avro-bridge "0.1.0-SNAPSHOT"]
                           [camel-snake-kebab "0.4.0"]
                           [adzerk/bootlaces "0.1.13" :scope "test"]
@@ -22,5 +22,4 @@
 (deftask test []
   (merge-env! :resource-paths #{"test_resources"}
               :source-paths #{"test"})
-  (prn (get-env :resource-paths))
   (test/test))

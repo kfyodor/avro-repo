@@ -17,32 +17,12 @@
   (get-schema [this k]
     (get schemas k)))
 
-(h/defkafkamessage user-created
-  :topic :user-events
-  :key-fn #(-> % :id str)
-  :serialize-fn
-  (fn [{:keys [id]}]
-    {:id (->> id str (map byte) byte-array)
-     :event-type :created}))
-
-(h/defkafkamessage user-updated
-  :topic :user-events
-  :key-fn #(-> % :id str)
-  :serialize-fn
-  (fn [{:keys [id]}]
-    {:id (->> id str (map byte) byte-array)
-     :event-type :updated}))
-
-(deftest macro-test
-  (let [schema-repo (map->Schemas {:schemas (h/load-schemas!)})
-        uuid        (java.util.UUID/randomUUID)
-        user        {:id uuid}
-        {ckey :key
-         cvalue :value
-         ctopic :topic} (make-user-created-message schema-repo user)
-        {ukey :key
-         uvalue :value
-         utopic :topic} (make-user-updated-message schema-repo user)]
-    (is (= (str uuid) ukey ckey))
-    (is (instance? GenericData$Record uvalue))
-    (is (instance? GenericData$Record cvalue))))
+(deftest apply-schema-test
+  (let [schemas (->Schemas (h/load-schemas! "avro"))
+        msg {:topic "user_events"
+             :value {:id (->> (java.util.UUID/randomUUID)
+                              (str)
+                              (map byte)
+                              (byte-array))}}]
+    (is (instance? GenericData$Record
+                   (:value (h/apply-schema schemas msg))))))

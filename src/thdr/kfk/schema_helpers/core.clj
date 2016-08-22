@@ -18,50 +18,8 @@
          (recur (rest files) schemas))
        schemas))))
 
-(defmacro defkafkamessage
-  "A helper macro which generates a function make-:event:-message.
-   Sets the topic same to `event` name, transforms a value with
-   provided `serialize-fn`, gets a schema from provided schema repo
-   (must implement a Schema protocol with `get-schema` by topic name)
-   and finally creates an Avro object and puts it in a `:value` key.
-
-   Example:
-
-   First of all, you should  have your avro schemas in resources/avro dir.
-   Schema name must match a Kafka topic name which this message will be
-   sent to.
-
-   (defrecord Schemas ;; it's better to use this with something like Component
-     SchemaRepo
-     (get-schema [this k]
-       (get (:schemas this) k)))
-
-   (def schema-repo
-     (map->Schemas {:schemas (load-schemas! \"your_schemas_path\")}))
-
-   (defkafkamessage user-created
-     :topic :user-events ;; a Kafka topic message will be sent to
-     :key-fn #(-> % :id str) ;; applied to obj before serialization
-     :serialize-fn #(merge % {:type :created :id (uuid-to-bytes (:id %))}))
-
-   (make-user-created-message schema-repo
-                              {:id (java.util.UUID/randomUUID)}
-                              {:partition 0}) ;; optional Kafka message keys"
-  [event & {:keys [topic key-fn serialize-fn deserialize-fn]
-            :or {serialize-fn identity
-                 deserialize-fn identity}}]
-  {:pre [(not (nil? topic))]}
-  (let [fn-name (symbol (str "make-" event "-message"))]
-    `(defn ~fn-name
-       ([schemas# obj#]
-        (~fn-name schemas# obj# {}))
-       ([schemas# obj# opts#]
-        (let [{partition# :partition
-               key# :key
-               timestamp# :timestamp} opts#
-              sch# (proto/get-schema schemas# ~topic)]
-          {:topic ~(-> topic name ->snake_case)
-           :partition partition#
-           :timestamp timestamp#
-           :key (cond key# key# ~key-fn (~key-fn obj#) :else nil)
-           :value (avro/->java sch# (~serialize-fn obj#))})))))
+(defn apply-schema
+  [schema-repo {:keys [topic] :as msg}]
+  (let [schema-name (-> topic keyword ->kebab-case)
+        schema (proto/get-schema schema-repo schema-name)]
+    (update-in msg [:value] (partial avro/->java schema))))

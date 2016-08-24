@@ -7,9 +7,9 @@
 
 (defn load-schemas!
   "Loads Avro schemas from resources into a map."
-  ([] (load-schemas! "avro/"))
-  ([path]
-   (loop [files (file-seq (io/file (io/resource path))) schemas {}]
+  ([] (load-schemas! (io/resource "avro/")))
+  ([^java.net.URL resource-path]
+   (loop [files (file-seq (io/file resource-path)) schemas {}]
      (if-let [file (first files)]
        (if-let [[_ name] (re-matches #"\A(.+)\.avsc\z" (.getName file))]
          (let [schema (Schema/parse (slurp file))

@@ -8,19 +8,30 @@
            [java.io File]
            [java.util.jar JarFile JarFile$JarFileEntry]))
 
-(defmulti schema-seq
+(defmulti resources-seq
   (fn [path-name]
-    (keyword (.getProtocol (io/resource path-name)))))
+    (if-let [r (io/resource path-name)]
+      (keyword (.getProtocol r))
+      :nonexistent-resource)))
 
-(defmethod schema-seq :file
+(defmethod resources-seq :file
   [path-name]
   (file-seq (io/file (io/resource path-name))))
 
-(defmethod schema-seq :jar
+(defmethod resources-seq :jar
   [path-name]
   (let [abs-path (-> (.getPath (io/resource path-name))
                      (str/replace #"\Afile\:((.+?)\.jar)\!.+\z" "$1"))]
     (iterator-seq (.entries (JarFile. abs-path)))))
+
+(defmethod resources-seq :nonexistent-resource
+  [path-name]
+  (throw (Exception. (format "Could not find any resources in `%s`" path-name))))
+
+(defmethod resources-seq :default ;; todo: http??
+  [path-name]
+  (let [p (.getProtocol (io/resource path-name))]
+    (throw (Exception. (format "`%s` resources are not supported" p)))))
 
 (defmulti maybe-get-schema-file
   (fn [path-name file]
@@ -52,7 +63,7 @@
                       (Schema/parse (slurp file)))
                schemas))
            {}
-           (schema-seq path))))
+           (resources-seq path))))
 
 (defn apply-schema
   [schema-repo {:keys [topic] :as msg}]

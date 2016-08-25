@@ -18,6 +18,11 @@
   (let [schemas (h/load-schemas! "jar_schemas/")]
     (is (instance? Schema (:user-events schemas)))))
 
+(deftest nonexistent-resource
+  (is (thrown-with-msg? Exception
+                        #"Could not find"
+                        (h/load-schemas! "some_dir/"))))
+
 (defrecord Schemas [schemas]
   p/SchemaRepo
 

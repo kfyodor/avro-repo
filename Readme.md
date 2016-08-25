@@ -10,9 +10,9 @@ _In progress_
 
 ### Loading schemas.
 
-First of all, put your schemas somewhere in `resources`.
+Put your schemas somewhere into `resources` dir.
 
-Then you can use `(load-schemas! schemas-path)` to load Avro schemas into your app. `load-schemas!` returns a map where the key is kebab-cased and keywordized name of schema and the value is an `org.apache.avro.Schema` instance.
+Use `(load-schemas! schemas-path)` to load Avro schemas into your app. `load-schemas!` returns a map where the key is a kebab-cased and keywordized name of a schema and the value is an `org.apache.avro.Schema` instance.
 
 You can access this map directly or it's even better to create a record with `proto/SchemaRepo` protocol implemented and use it with something like [Component](https://github.com/stuartsierra/component) library.
 
@@ -31,3 +31,4 @@ You can access this map directly or it's even better to create a record with `pr
   (get-schema [this k]
     (get schemas k)))
 ```
+

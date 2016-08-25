@@ -5,7 +5,8 @@
                           [adzerk/boot-test "1.1.1" :scope "test"]])
 
 (require '[adzerk.boot-test :as test]
-         '[adzerk.bootlaces :refer :all])
+         '[adzerk.bootlaces :refer :all]
+         '[clojure.java.io :as io])
 
 (def +version+ "0.1.0-SNAPSHOT")
 (bootlaces! +version+ :dont-modify-paths? true)

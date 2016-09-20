@@ -1,8 +1,24 @@
-# Avro-repository for Clojure [![CircleCI](https://circleci.com/gh/konukhov/avro-repo.svg?style=shield)](https://circleci.com/gh/konukhov/avro-repo)
+# Avro-repository for Clojure 
+[![CircleCI](https://circleci.com/gh/konukhov/avro-repo.svg?style=shield)](https://circleci.com/gh/konukhov/avro-repo) [![Clojars Project](https://img.shields.io/clojars/v/io.thdr/avro-repo.svg)](https://clojars.org/io.thdr/avro-repo)
 
 A little library for managing Avro schemas in your Clojure projects.
 
 This is a part of [thdr/kfk](https://github.com/konukhov/kfk) project: clients and helpers for working with Apache Kafka in Clojure.
+
+## Install
+
+#### Boot / Leiningen
+
+`[io.thdr/avro-repo "0.1.0"]`
+	
+#### Maven
+```xml
+<dependency>
+  <groupId>io.thdr</groupId>
+  <artifactId>avro-repo</artifactId>
+  <version>0.1.0</version>
+</dependency>
+```
 
 ## Usage
 

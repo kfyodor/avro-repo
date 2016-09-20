@@ -4,3 +4,4 @@ target
 .projectile
 .#*
 .m2
+.DS_Store

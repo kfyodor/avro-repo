@@ -1,0 +1,6 @@
+{
+  "namespace": "schemas.test",
+  "name": "left_or_right",
+  "type": "enum",
+  "symbols": ["left", "right"]
+}

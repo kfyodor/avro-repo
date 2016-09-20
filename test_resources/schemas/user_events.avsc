@@ -1,4 +1,5 @@
 {
+  "namespace": "schemas.test",
   "name": "UserEvent",
   "type": "record",
   "fields": [
@@ -20,6 +21,10 @@
           "updated"
         ]
       }
+    },
+    {
+      "name": "lor",
+      "type": "left_or_right"
     }
   ]
 }
